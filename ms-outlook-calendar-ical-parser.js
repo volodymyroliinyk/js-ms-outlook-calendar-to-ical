@@ -1,5 +1,6 @@
 var eventButtons = document.querySelectorAll('[class*="root-"][role="button"]');
-var regExpPattern =/event\sfrom\s(.*?)\,\s(.*?)\s(.*?)\,\s(.*?)\s(.*?)\sto\s(.*?)\s(.*?)(\s{1,3})(location|recurring|session|organizer)(.*)/;
+var regExpPattern = /event\sfrom\s(.*?)\,\s(.*?)\s(.*?)\,\s(.*?)\s(.*?)\sto\s(.*?)\s(.*?)(\s{1,3})(location|recurring|session|organizer)(.*)/;
+
 /**
  * 1 week day name.
  * 2 Month name
@@ -19,7 +20,7 @@ function isoDateWithoutTimeZone(date) {
 }
 
 function uuidv4() {
-    return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+    return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
         (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
     );
 }
@@ -30,12 +31,12 @@ CALSCALE:GREGORIAN
 METHOD:PUBLISH
 PRODID:-//My Services//Calendar//EN`;
 
-for(var i in eventButtons){
-    if(eventButtons.hasOwnProperty(i)){
+for (var i in eventButtons) {
+    if (eventButtons.hasOwnProperty(i)) {
         var eventText = eventButtons[i].getAttribute('aria-label');
         var eventTextParts = regExpPattern.exec(eventText)
 
-        if(eventTextParts != null){
+        if (eventTextParts != null) {
             var weekDayName = eventTextParts[1];
             var monthName = eventTextParts[2];
             var day = eventTextParts[3];
@@ -44,21 +45,21 @@ for(var i in eventButtons){
             var timeTo = eventTextParts[6];
             var summary = eventTextParts[7];
 
-            if(summary.indexOf('Lunch')>-1 ||
-                summary.indexOf('out of office')>-1 ||
-                summary.indexOf('Canceled')>-1
-            ){
+            if (summary.indexOf('Lunch') > -1 ||
+                summary.indexOf('out of office') > -1 ||
+                summary.indexOf('Canceled') > -1
+            ) {
                 continue;
             }
 
-            var dateFromString = weekDayName+', '+day+' '+monthName + ' '+year+ ' '+timeFrom+':00';
-            var dateToString = weekDayName+', '+day+' '+monthName + ' '+year+ ' '+timeTo+':00';
+            var dateFromString = weekDayName + ', ' + day + ' ' + monthName + ' ' + year + ' ' + timeFrom + ':00';
+            var dateToString = weekDayName + ', ' + day + ' ' + monthName + ' ' + year + ' ' + timeTo + ':00';
 
-            iCalMarkupBody+=`
+            iCalMarkupBody += `
 BEGIN:VEVENT
-DTSTART:${isoDateWithoutTimeZone(new Date(dateFromString)).replaceAll('-','').replaceAll(':','').replace('.000','')}
-DTEND:${isoDateWithoutTimeZone(new Date(dateToString)).replaceAll('-','').replaceAll(':','').replace('.000','')}
-DTSTAMP:${isoDateWithoutTimeZone(new Date(dateFromString)).replaceAll('-','').replaceAll(':','').replace('.000','')}
+DTSTART:${isoDateWithoutTimeZone(new Date(dateFromString)).replaceAll('-', '').replaceAll(':', '').replace('.000', '')}
+DTEND:${isoDateWithoutTimeZone(new Date(dateToString)).replaceAll('-', '').replaceAll(':', '').replace('.000', '')}
+DTSTAMP:${isoDateWithoutTimeZone(new Date(dateFromString)).replaceAll('-', '').replaceAll(':', '').replace('.000', '')}
 SUMMARY:${summary}
 UID:${uuidv4()}
 STATUS:CONFIRMED
@@ -67,7 +68,7 @@ END:VEVENT`;
     }
 }
 
-iCalMarkupBody+=`
+iCalMarkupBody += `
 END:VCALENDAR`;
 
 console.log(iCalMarkupBody)
